@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سبحة إلكترونية</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #f5f7fa;
+        }
+
+        /* زخارف إسلامية خلفية */
+        .islamic-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            pointer-events: none;
+            background-image: 
+                radial-gradient(circle at 20% 20%, #8b7355 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, #8b7355 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, #8b7355 0%, transparent 50%);
+            background-size: 200px 200px;
+        }
+
+        /* البرواز العلوي */
+        .top-frame {
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .verse-container {
+            background: linear-gradient(135deg, #8b7355 0%, #d4a574 100%);
+            padding: 20px 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .verse-container::before,
+        .verse-container::after {
+            content: '۞';
+            position: absolute;
+            font-size: 40px;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .verse-container::before {
+            top: 10px;
+            right: 10px;
+        }
+
+        .verse-container::after {
+            bottom: 10px;
+            left: 10px;
+        }
+
+        .verse {
+            font-size: 28px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* منطقة العداد */
+        .counter-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .counter-display {
+            font-size: 120px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+            padding: 20px 40px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode .counter-display {
+            color: #f39c12;
+            background: rgba(30, 30, 50, 0.9);
+            text-shadow: 0 0 20px rgba(243, 156, 18, 0.8),
+                         0 0 40px rgba(243, 156, 18, 0.6),
+                         0 0 60px rgba(243, 156, 18, 0.4);
+            box-shadow: 0 15px 35px rgba(243, 156, 18, 0.3);
+        }
+
+        .controls {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            pointer-events: auto;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-reset {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+        }
+
+        .btn-reset:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4);
+        }
+
+        .btn-mode {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+        }
+
+        .btn-mode:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        /* الجزء السفلي */
+        .footer {
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .sadaqa {
+            font-size: 24px;
+            font-weight: bold;
+            color: #27ae60;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        body.dark-mode .sadaqa {
+            color: #2ecc71;
+            background: rgba(30, 30, 50, 0.9);
+            text-shadow: 0 0 10px rgba(46, 204, 113, 0.8);
+        }
+
+        /* زخارف إضافية */
+        .decoration {
+            position: absolute;
+            font-size: 60px;
+            color: rgba(139, 115, 85, 0.2);
+            pointer-events: none;
+        }
+
+        .decoration-1 {
+            top: 10%;
+            left: 5%;
+        }
+
+        .decoration-2 {
+            bottom: 10%;
+            right: 5%;
+        }
+
+        /* تصميم متجاوب */
+        @media (max-width: 768px) {
+            .verse {
+                font-size: 22px;
+            }
+            
+            .counter-display {
+                font-size: 80px;
+                padding: 15px 30px;
+            }
+            
+            .btn {
+                padding: 12px 24px;
+                font-size: 16px;
+            }
+            
+            .sadaqa {
+                font-size: 20px;
+            }
+        }
+
+        /* تأثير الاحتفال عند كل 33 عددة */
+        .celebration {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .celebration.active {
+            opacity: 1;
+        }
+
+        .celebration-message {
+            font-size: 40px;
+            font-weight: bold;
+            color: #27ae60;
+            text-shadow: 0 0 10px rgba(39, 174, 96, 0.8);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: scale(0);
+            transition: transform 0.5s ease;
+        }
+
+        body.dark-mode .celebration-message {
+            color: #2ecc71;
+            background: rgba(30, 30, 50, 0.9);
+            text-shadow: 0 0 20px rgba(46, 204, 113, 0.8);
+        }
+
+        .celebration.active .celebration-message {
+            transform: scale(1);
+        }
+
+        /* تأثير النجوم المتطايرة */
+        .star {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #f1c40f;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            opacity: 0;
+            z-index: 101;
+        }
+
+        @keyframes starAnimation {
+            0% {
+                transform: translate(0, 0) scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--x), var(--y)) scale(1);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="islamic-pattern"></div>
+    <div class="decoration decoration-1">☪</div>
+    <div class="decoration decoration-2">☪</div>
+
+    <header class="top-frame">
+        <div class="verse-container">
+            <h1 class="verse">سَبِّحِ اسْمَ رَبِّكَ الْأَعْلَى</h1>
+        </div>
+    </header>
+
+    <main class="counter-section">
+        <div class="counter-display" id="counter">0</div>
+        <div class="controls">
+            <button class="btn btn-reset" id="resetBtn">إعادة العداد</button>
+            <button class="btn btn-mode" id="modeBtn">الوضع الليلي</button>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="sadaqa">صدقة جارية</div>
+    </footer>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-message">بارك الله فيك</div>
+    </div>
+
+    <script>
+        // متغيرات العداد
+        let counter = 0;
+        let isProcessing = false; // لمنع الزيادات المتعددة
+        const counterDisplay = document.getElementById('counter');
+        const resetBtn = document.getElementById('resetBtn');
+        const modeBtn = document.getElementById('modeBtn');
+        const celebration = document.getElementById('celebration');
+        const body = document.body;
+
+        // تحديث العداد - يزيد بمقدار 1 فقط
+        function updateCounter() {
+            // منع الزيادات المتعددة
+            if (isProcessing) return;
+            isProcessing = true;
+            
+            counter++;
+            counterDisplay.textContent = counter;
+            
+            // التحقق من الوصول إلى 33 عددة
+            if (counter % 33 === 0) {
+                showCelebration();
+                createStars();
+            }
+            
+            // السماح بالزيادة التالية
+            setTimeout(() => {
+                isProcessing = false;
+            }, 200);
+        }
+
+        // إعادة العداد إلى الصفر
+        function resetCounter() {
+            counter = 0;
+            counterDisplay.textContent = counter;
+        }
+
+        // تبديل الوضع الليلي
+        function toggleDarkMode() {
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) {
+                modeBtn.textContent = 'الوضع النهاري';
+            } else {
+                modeBtn.textContent = 'الوضع الليلي';
+            }
+        }
+
+        // عرض رسالة الاحتفال
+        function showCelebration() {
+            celebration.classList.add('active');
+            
+            // إخفاء الرسالة بعد 3 ثواني
+            setTimeout(() => {
+                celebration.classList.remove('active');
+            }, 3000);
+        }
+
+        // إنشاء النجوم المتطايرة
+        function createStars() {
+            const colors = ['#f1c40f', '#e74c3c', '#3498db', '#2ecc71', '#9b59b6'];
+            const starCount = 30;
+            
+            for (let i = 0; i < starCount; i++) {
+                setTimeout(() => {
+                    const star = document.createElement('div');
+                    star.classList.add('star');
+                    
+                    // تحديد موضع عشوائي للنجمة
+                    const x = (Math.random() - 0.5) * 800;
+                    const y = (Math.random() - 0.5) * 800;
+                    
+                    star.style.setProperty('--x', `${x}px`);
+                    star.style.setProperty('--y', `${y}px`);
+                    star.style.left = '50%';
+                    star.style.top = '50%';
+                    star.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    star.style.animation = 'starAnimation 1s ease-out forwards';
+                    
+                    body.appendChild(star);
+                    
+                    // إزالة النجمة بعد انتهاء الرسوم المتحركة
+                    setTimeout(() => {
+                        star.remove();
+                    }, 1000);
+                }, i * 50);
+            }
+        }
+
+        // معالج النقر الرئيسي
+        function handleClick(e) {
+            // التأكد من أن النقر ليس على الأزرار
+            if (!e.target.closest('.btn')) {
+                e.preventDefault();
+                updateCounter();
+            }
+        }
+
+        // أحداث النقر على كامل الصفحة
+        body.addEventListener('click', handleClick);
+
+        // أحداث اللمس على كامل الصفحة
+        body.addEventListener('touchstart', (e) => {
+            // التأكد من أن اللمس ليس على الأزرار
+            if (!e.target.closest('.btn')) {
+                e.preventDefault();
+                // منع تفعيل النقر المزدوج
+                e.stopPropagation();
+                
+                // استخدام setTimeout لمنع اللمسات المتعددة
+                setTimeout(() => {
+                    updateCounter();
+                }, 50);
+            }
+        });
+
+        // منع النقر المزدوج
+        body.addEventListener('dblclick', (e) => {
+            if (!e.target.closest('.btn')) {
+                e.preventDefault();
+            }
+        });
+
+        // أحداث الأزرار
+        resetBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            resetCounter();
+        });
+
+        modeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleDarkMode();
+        });
+
+        // منع السحب والتحديد على الموبايل
+        document.addEventListener('touchmove', (e) => {
+            if (!e.target.closest('.btn')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // منع الإيماءات الافتراضية
+        document.addEventListener('gesturestart', (e) => {
+            e.preventDefault();
+        });
+
+        document.addEventListener('gesturechange', (e) => {
+            e.preventDefault();
+        });
+
+        document.addEventListener('gestureend', (e) => {
+            e.preventDefault();
+        });
+
+        // حفظ العداد في التخزين المحلي
+        function saveCounter() {
+            localStorage.setItem('tasbihCounter', counter);
+        }
+
+        function loadCounter() {
+            const saved = localStorage.getItem('tasbihCounter');
+            if (saved) {
+                counter = parseInt(saved);
+                counterDisplay.textContent = counter;
+            }
+        }
+
+        // تحميل العداد عند بدء الصفحة
+        loadCounter();
+
+        // حفظ العداد عند كل تغيير
+        body.addEventListener('click', () => {
+            if (!event.target.closest('.btn')) {
+                saveCounter();
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            saveCounter();
+            localStorage.removeItem('tasbihCounter');
+        });
+    </script>
+</body>
+</html>
